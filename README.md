@@ -6,6 +6,7 @@ Chatflows, and Agents.
 - Website: https://beatapi.io/
 - API documentation: https://docs.beatapi.io/
 - Create an API key: https://beatapi.io/dashboard/apikeys
+- Source code: https://github.com/erickkkyt/beatapi-dify-plugin
 
 ## Tools
 
@@ -77,4 +78,3 @@ dify plugin package ./beatapi
 ## Support
 
 Email support@beatapi.io or visit https://beatapi.io/.
-
