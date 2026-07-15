@@ -1,0 +1,241 @@
+identity:
+  author: erickkkyt
+  name: create_music_video_task
+  label:
+    en_US: Create Music Video Task
+    zh_Hans: 创建音乐视频任务
+description:
+  human:
+    en_US: Create an asynchronous AI music video task from public image and audio URLs.
+    zh_Hans: 使用公开图片和音频 URL 创建异步 AI 音乐视频任务。
+  llm: Create a BeatAPI AI music video task. Return the task ID immediately, then use Get Task to monitor status and retrieve the final hosted video URL.
+parameters:
+  - name: image_urls
+    type: string
+    form: llm
+    required: true
+    label:
+      en_US: Image URLs
+      zh_Hans: 图片 URL
+    human_description:
+      en_US: 1-7 public HTTPS image URLs, separated by commas or new lines, or a JSON string array.
+      zh_Hans: 1-7 个公开 HTTPS 图片 URL，用逗号或换行分隔，也可使用 JSON 字符串数组。
+    llm_description: One to seven public HTTPS PNG, JPG, JPEG, or WebP image URLs. Separate multiple URLs with commas or new lines.
+  - name: audio_url
+    type: string
+    form: llm
+    required: true
+    label:
+      en_US: Audio URL
+      zh_Hans: 音频 URL
+    human_description:
+      en_US: A public HTTPS MP3, WAV, AAC, or M4A URL. Audio must be 10-180 seconds.
+      zh_Hans: 公开 HTTPS MP3、WAV、AAC 或 M4A URL，音频时长需为 10-180 秒。
+    llm_description: Public HTTPS audio URL for a 10-180 second MP3, WAV, AAC, or M4A file.
+  - name: prompt
+    type: string
+    form: llm
+    required: false
+    label:
+      en_US: Creative Prompt
+      zh_Hans: 创意提示词
+    human_description:
+      en_US: Optional camera, pacing, lighting, and visual progression instructions, up to 3000 characters.
+      zh_Hans: 可选的镜头、节奏、灯光和画面发展说明，最多 3000 字符。
+    llm_description: Optional original visual direction. Avoid copyrighted characters, brands, and living-artist imitation.
+  - name: language
+    type: select
+    form: llm
+    required: false
+    default: en
+    label:
+      en_US: Language
+      zh_Hans: 语言
+    human_description:
+      en_US: Language used by the music-video workflow.
+      zh_Hans: 音乐视频工作流使用的语言。
+    llm_description: Use en for English or zh for Chinese.
+    options:
+      - value: en
+        label:
+          en_US: English
+          zh_Hans: 英语
+      - value: zh
+        label:
+          en_US: Chinese
+          zh_Hans: 中文
+  - name: quality
+    type: select
+    form: llm
+    required: false
+    default: standard
+    label:
+      en_US: Quality
+      zh_Hans: 质量
+    human_description:
+      en_US: Standard is faster and lower cost; High uses the premium render path.
+      zh_Hans: Standard 速度更快且成本更低；High 使用高质量渲染。
+    llm_description: Choose standard unless the user explicitly asks for high quality.
+    options:
+      - value: standard
+        label:
+          en_US: Standard
+          zh_Hans: 标准
+      - value: high
+        label:
+          en_US: High
+          zh_Hans: 高质量
+  - name: resolution
+    type: select
+    form: llm
+    required: false
+    default: 720p
+    label:
+      en_US: Resolution
+      zh_Hans: 分辨率
+    human_description:
+      en_US: Output video resolution. High quality cannot be combined with 540p.
+      zh_Hans: 输出视频分辨率，高质量不能与 540p 组合。
+    llm_description: Choose 540p, 720p, or 1080p.
+    options:
+      - value: 540p
+        label:
+          en_US: 540p
+          zh_Hans: 540p
+      - value: 720p
+        label:
+          en_US: 720p
+          zh_Hans: 720p
+      - value: 1080p
+        label:
+          en_US: 1080p
+          zh_Hans: 1080p
+  - name: aspect_ratio
+    type: select
+    form: llm
+    required: false
+    default: "9:16"
+    label:
+      en_US: Aspect Ratio
+      zh_Hans: 画面比例
+    human_description:
+      en_US: Output aspect ratio.
+      zh_Hans: 输出画面比例。
+    llm_description: Choose 1:1, 16:9, 9:16, 4:3, or 3:4.
+    options:
+      - value: "1:1"
+        label: { en_US: "1:1", zh_Hans: "1:1" }
+      - value: "16:9"
+        label: { en_US: "16:9", zh_Hans: "16:9" }
+      - value: "9:16"
+        label: { en_US: "9:16", zh_Hans: "9:16" }
+      - value: "4:3"
+        label: { en_US: "4:3", zh_Hans: "4:3" }
+      - value: "3:4"
+        label: { en_US: "3:4", zh_Hans: "3:4" }
+  - name: style
+    type: string
+    form: llm
+    required: false
+    label:
+      en_US: Style
+      zh_Hans: 风格
+    human_description:
+      en_US: Optional visual style phrase, up to 200 characters.
+      zh_Hans: 可选的视觉风格短语，最多 200 字符。
+    llm_description: Concise optional visual style phrase.
+  - name: lip_sync
+    type: boolean
+    form: llm
+    required: false
+    default: false
+    label:
+      en_US: Enable Lip Sync
+      zh_Hans: 启用对口型
+    human_description:
+      en_US: Add lip sync. Not supported with 540p.
+      zh_Hans: 添加对口型，不支持 540p。
+    llm_description: Enable only when the user provides a suitable face reference.
+  - name: lip_ref_url
+    type: string
+    form: llm
+    required: false
+    label:
+      en_US: Lip Reference Image URL
+      zh_Hans: 口型参考图 URL
+    human_description:
+      en_US: Public HTTPS close-up face image used for lip sync.
+      zh_Hans: 用于对口型的公开 HTTPS 人脸近景图片。
+    llm_description: Public HTTPS front-facing close-up face image URL.
+  - name: add_subtitle
+    type: boolean
+    form: llm
+    required: false
+    default: false
+    label:
+      en_US: Add Subtitles
+      zh_Hans: 添加字幕
+    human_description:
+      en_US: Add subtitles when an SRT URL is supplied.
+      zh_Hans: 提供 SRT URL 时添加字幕。
+    llm_description: Enable when srt_url is provided.
+  - name: subtitle_color
+    type: string
+    form: llm
+    required: false
+    label:
+      en_US: Subtitle Color
+      zh_Hans: 字幕颜色
+    human_description:
+      en_US: Optional six-digit hex color such as #FFFFFF.
+      zh_Hans: 可选的六位十六进制颜色，例如 #FFFFFF。
+    llm_description: Six-digit hexadecimal color including the # prefix.
+  - name: srt_url
+    type: string
+    form: llm
+    required: false
+    label:
+      en_US: SRT URL
+      zh_Hans: SRT URL
+    human_description:
+      en_US: Public HTTPS URL for an .srt subtitle file.
+      zh_Hans: .srt 字幕文件的公开 HTTPS URL。
+    llm_description: Public HTTPS URL ending in .srt.
+  - name: duration
+    type: number
+    form: llm
+    required: false
+    min: 10
+    max: 180
+    label:
+      en_US: Duration Fallback
+      zh_Hans: 时长备用值
+    human_description:
+      en_US: Billing fallback in seconds when BeatAPI cannot detect audio duration.
+      zh_Hans: BeatAPI 无法检测音频时长时使用的计费备用秒数。
+    llm_description: Optional integer from 10 to 180. It cannot override a detected audio duration.
+  - name: compose_mode
+    type: select
+    form: llm
+    required: false
+    default: auto
+    label:
+      en_US: Compose Mode
+      zh_Hans: 合成模式
+    human_description:
+      en_US: Auto returns a finished video; Manual returns a storyboard for later composition.
+      zh_Hans: Auto 返回完整视频；Manual 返回可后续合成的分镜。
+    llm_description: Choose auto for a final video or manual for an editable storyboard.
+    options:
+      - value: auto
+        label:
+          en_US: Auto
+          zh_Hans: 自动
+      - value: manual
+        label:
+          en_US: Manual
+          zh_Hans: 手动
+extra:
+  python:
+    source: tools/create_music_video_task.py
+

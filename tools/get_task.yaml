@@ -1,0 +1,27 @@
+identity:
+  author: erickkkyt
+  name: get_task
+  label:
+    en_US: Get Task
+    zh_Hans: 查询任务
+description:
+  human:
+    en_US: Get the current status, output, usage, and public error details for a BeatAPI task.
+    zh_Hans: 查询 BeatAPI 任务的当前状态、输出、用量和公开错误信息。
+  llm: Get a BeatAPI task by ID. Poll every 5-10 seconds until it reaches a terminal state, or until a manual music-video task reaches storyboard_ready.
+parameters:
+  - name: task_id
+    type: string
+    form: llm
+    required: true
+    label:
+      en_US: Task ID
+      zh_Hans: 任务 ID
+    human_description:
+      en_US: Task ID returned by Create Music Video Task, such as task_8K2qA.
+      zh_Hans: 由“创建音乐视频任务”返回的任务 ID，例如 task_8K2qA。
+    llm_description: BeatAPI task ID returned by a create action.
+extra:
+  python:
+    source: tools/get_task.py
+

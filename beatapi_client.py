@@ -1,0 +1,130 @@
+from __future__ import annotations
+
+from collections.abc import Callable, Mapping
+from typing import Any
+from urllib.parse import quote
+
+
+RequestFn = Callable[..., Any]
+
+
+class BeatAPIError(RuntimeError):
+    def __init__(
+        self,
+        message: str,
+        *,
+        code: str = "beatapi_request_failed",
+        request_id: str | None = None,
+        status_code: int | None = None,
+    ) -> None:
+        super().__init__(message)
+        self.code = code
+        self.request_id = request_id
+        self.status_code = status_code
+
+
+def _default_request(**kwargs: Any) -> Any:
+    import requests
+
+    return requests.request(**kwargs)
+
+
+class BeatAPIClient:
+    """Small public interface for authenticated BeatAPI workflow requests."""
+
+    def __init__(
+        self,
+        api_key: str,
+        *,
+        base_url: str = "https://api.beatapi.io",
+        timeout: int = 30,
+        request: RequestFn | None = None,
+    ) -> None:
+        normalized_key = api_key.strip()
+        if not normalized_key:
+            raise ValueError("A BeatAPI API key is required.")
+
+        self._api_key = normalized_key
+        self._base_url = base_url.rstrip("/")
+        self._timeout = timeout
+        self._request_fn = request or _default_request
+
+    def get_usage(self) -> dict[str, Any]:
+        return self._request("GET", "/v1/usage")
+
+    def create_music_video_task(
+        self,
+        *,
+        images: list[str],
+        audio_url: str,
+        **options: Any,
+    ) -> dict[str, Any]:
+        payload = {
+            "images": images,
+            "audio_url": audio_url,
+            **options,
+        }
+        compact_payload = {
+            key: value
+            for key, value in payload.items()
+            if value is not None and value != "" and value != []
+        }
+        return self._request(
+            "POST",
+            "/v1/music-video/tasks",
+            json=compact_payload,
+        )
+
+    def get_task(self, task_id: str) -> dict[str, Any]:
+        normalized_task_id = task_id.strip()
+        if not normalized_task_id:
+            raise ValueError("A BeatAPI task ID is required.")
+        return self._request("GET", f"/v1/tasks/{quote(normalized_task_id, safe='')}")
+
+    def _request(
+        self,
+        method: str,
+        path: str,
+        *,
+        json: Mapping[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        response = self._request_fn(
+            method=method,
+            url=f"{self._base_url}{path}",
+            headers={
+                "Authorization": f"Bearer {self._api_key}",
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "User-Agent": "BeatAPI-Dify-Plugin/0.1.0",
+            },
+            json=json,
+            timeout=self._timeout,
+        )
+
+        try:
+            payload = response.json()
+        except Exception as exc:
+            raise BeatAPIError(
+                "BeatAPI returned a non-JSON response.",
+                status_code=getattr(response, "status_code", None),
+            ) from exc
+
+        status_code = getattr(response, "status_code", None)
+        if status_code is None or status_code < 200 or status_code >= 300:
+            error = payload.get("error", {}) if isinstance(payload, dict) else {}
+            message = error.get("message") or "BeatAPI request failed."
+            raise BeatAPIError(
+                message,
+                code=error.get("code") or "beatapi_request_failed",
+                request_id=error.get("request_id"),
+                status_code=status_code,
+            )
+
+        data = payload.get("data") if isinstance(payload, dict) else None
+        if not isinstance(data, dict):
+            raise BeatAPIError(
+                "BeatAPI returned an unexpected response shape.",
+                code="invalid_beatapi_response",
+                status_code=status_code,
+            )
+        return data

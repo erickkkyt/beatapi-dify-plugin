@@ -1,0 +1,37 @@
+identity:
+  author: erickkkyt
+  name: beatapi
+  label:
+    en_US: BeatAPI
+    zh_Hans: BeatAPI
+  description:
+    en_US: Build AI music video workflows with BeatAPI's asynchronous API.
+    zh_Hans: 使用 BeatAPI 异步 API 构建 AI 音乐视频工作流。
+  icon: icon.svg
+  tags:
+    - videos
+    - entertainment
+
+credentials_for_provider:
+  api_key:
+    type: secret-input
+    required: true
+    label:
+      en_US: BeatAPI API Key
+      zh_Hans: BeatAPI API Key
+    placeholder:
+      en_US: sk_...
+      zh_Hans: sk_...
+    help:
+      en_US: Create a revocable API key in the BeatAPI dashboard.
+      zh_Hans: 在 BeatAPI 控制台创建可随时撤销的 API Key。
+    url: https://beatapi.io/dashboard/apikeys
+
+tools:
+  - tools/create_music_video_task.yaml
+  - tools/get_task.yaml
+
+extra:
+  python:
+    source: provider/beatapi.py
+

@@ -1,0 +1,31 @@
+version: 0.1.0
+type: plugin
+author: erickkkyt
+name: beatapi
+label:
+  en_US: BeatAPI
+  zh_Hans: BeatAPI
+description:
+  en_US: Create and monitor asynchronous AI music video tasks with BeatAPI.
+  zh_Hans: 使用 BeatAPI 创建并查询异步 AI 音乐视频任务。
+icon: icon.svg
+resource:
+  memory: 1048576
+  permission: {}
+plugins:
+  tools:
+    - provider/beatapi.yaml
+meta:
+  version: 0.0.2
+  arch:
+    - amd64
+    - arm64
+  runner:
+    language: python
+    version: "3.12"
+    entrypoint: main
+  minimum_dify_version: 1.7.0
+created_at: 2026-07-15T00:00:00.000000000Z
+privacy: PRIVACY.md
+verified: false
+
