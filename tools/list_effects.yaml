@@ -1,0 +1,32 @@
+identity:
+  author: erickkkyt
+  name: list_effects
+  label: { en_US: List Effects, zh_Hans: 查询 Effects }
+description:
+  human:
+    en_US: List published BeatAPI Effects and their current versioned input contracts.
+    zh_Hans: 查询已发布的 BeatAPI Effects 及当前版本输入契约。
+  llm: Call this before creating an Effect task. Use the returned input and options contract as the source of truth.
+parameters:
+  - name: output_type
+    type: select
+    form: llm
+    required: false
+    label: { en_US: Output Type, zh_Hans: 输出类型 }
+    human_description: { en_US: Optionally filter image or video Effects., zh_Hans: 可按图片或视频 Effect 筛选。 }
+    llm_description: Omit to return both output types.
+    options:
+      - value: image
+        label: { en_US: Image, zh_Hans: 图片 }
+      - value: video
+        label: { en_US: Video, zh_Hans: 视频 }
+  - name: category
+    type: string
+    form: llm
+    required: false
+    label: { en_US: Category, zh_Hans: 分类 }
+    human_description: { en_US: Optional Effect category filter., zh_Hans: 可选的 Effect 分类筛选。 }
+    llm_description: Use a category returned by an earlier catalog call.
+extra:
+  python:
+    source: tools/list_effects.py

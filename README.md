@@ -1,7 +1,7 @@
 # BeatAPI for Dify
 
-Create and monitor asynchronous AI music video tasks from Dify Workflows,
-Chatflows, and Agents.
+Create and monitor asynchronous BeatAPI image, video, Effect, and music-video
+tasks from Dify Workflows, Chatflows, and Agents.
 
 - Website: https://beatapi.io/
 - API documentation: https://docs.beatapi.io/
@@ -9,6 +9,23 @@ Chatflows, and Agents.
 - Source code: https://github.com/erickkkyt/beatapi-dify-plugin
 
 ## Tools
+
+The plugin exposes eight tools against the current BeatAPI public contract:
+
+- **List Generation Models** — discover stable image/video aliases and input modes.
+- **Create Image Task** — generate or edit images with `nano-banana`,
+  `nano-banana-pro`, `gpt-image-2`, or `seedream-5-pro`.
+- **Create Video Task** — generate text, frame, or reference video with
+  `minimax-h3`, `seedance-2`, `seedance-2-fast`, `seedance-2-mini`, `veo-3.1`,
+  `seedance-2.5`, or `kling-3`.
+- **List Effects** and **Get Effect** — read each published Effect's versioned
+  image-count, media, output, and option contract.
+- **Create Effect Task** — run a selected Effect with a retry-safe idempotency key.
+- **Create Music Video Task** — run the higher-level Music Video workflow.
+- **Get Task** — poll every asynchronous task through the shared lifecycle.
+
+Model aliases are BeatAPI's public contract. The plugin never exposes or
+selects internal providers, templates, or routing IDs.
 
 ### Create Music Video Task
 
@@ -27,6 +44,11 @@ Returns the current task status, stage, output, usage, request ID, and public
 error fields. Poll every 5-10 seconds until the task reaches `succeeded` or
 `failed`; manual tasks can pause at `storyboard_ready` for later editing.
 
+Every current task includes `task_kind`, `capability_id`, and
+`capability_version`. Usage values are decimal USD amounts. Compatibility field
+names such as `credits_reserved` remain in the response, where 1 Credit equals
+$1 USD.
+
 ## Install from GitHub
 
 In Dify, open **Plugins > Install Plugin > GitHub**, then enter:
@@ -38,20 +60,21 @@ In Dify, open **Plugins > Install Plugin > GitHub**, then enter:
 1. Create a revocable API key at https://beatapi.io/dashboard/apikeys.
 2. Open **Tools > BeatAPI > Authorize** in Dify.
 3. Paste the API key. Dify verifies it with `GET /v1/usage`.
-4. Add **Create Music Video Task** and **Get Task** to a Workflow, Chatflow, or
-   Agent.
+4. Add the discovery/create tools you need plus **Get Task** to a Workflow,
+   Chatflow, or Agent.
 
 The API key is sent only in the `Authorization: Bearer` header to
 `https://api.beatapi.io`. Never place it in prompts or tool parameters.
 
 ## Example workflow
 
-1. Produce or collect a public image URL and a 10-180 second public audio URL.
-2. Call **Create Music Video Task**.
+1. Call **List Generation Models** or **List Effects** when the capability is
+   not already known.
+2. Supply public HTTPS media URLs and call the matching create tool.
 3. Store the returned `id`.
 4. Wait 5-10 seconds and call **Get Task** with that ID.
 5. Repeat with a bounded loop until the task reaches a terminal state.
-6. Read the hosted video URL from the task output.
+6. Read the BeatAPI-hosted image or video URL from `output.media` or `output.r2_url`.
 
 ## Local development
 

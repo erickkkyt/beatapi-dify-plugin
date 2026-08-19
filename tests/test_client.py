@@ -75,6 +75,45 @@ class BeatAPIClientTests(unittest.TestCase):
             },
         )
 
+    def test_unified_generation_and_effect_methods_use_public_routes(self) -> None:
+        request = RequestRecorder(
+            FakeResponse(200, {"data": {"object": "list", "data": []}})
+        )
+        client = BeatAPIClient("sk_test", request=request)
+
+        self.assertEqual(client.list_generation_models(), [])
+        client.create_image_task({"model": "nano-banana", "prompt": "Still"})
+        client.create_video_task({"model": "seedance-2-mini", "prompt": "Orbit"})
+        self.assertEqual(client.list_effects(output_type="video"), [])
+
+        request.response = FakeResponse(
+            200, {"data": {"id": "video-muscle-max", "object": "effect"}}
+        )
+        client.get_effect("video/muscle")
+        client.create_effect_task(
+            {
+                "effect_id": "video-muscle-max",
+                "images": ["https://media.example.com/portrait.png"],
+            },
+            idempotency_key="effect-dify-123",
+        )
+
+        self.assertEqual(
+            [(call["method"], call["url"]) for call in request.calls],
+            [
+                ("GET", "https://api.beatapi.io/v1/media/models"),
+                ("POST", "https://api.beatapi.io/v1/images/tasks"),
+                ("POST", "https://api.beatapi.io/v1/videos/tasks"),
+                ("GET", "https://api.beatapi.io/v1/effects?output_type=video"),
+                ("GET", "https://api.beatapi.io/v1/effects/video%2Fmuscle"),
+                ("POST", "https://api.beatapi.io/v1/effects/tasks"),
+            ],
+        )
+        self.assertEqual(
+            request.calls[-1]["headers"]["Idempotency-Key"],
+            "effect-dify-123",
+        )
+
     def test_api_errors_keep_the_public_error_code_and_request_id(self) -> None:
         request = RequestRecorder(
             FakeResponse(

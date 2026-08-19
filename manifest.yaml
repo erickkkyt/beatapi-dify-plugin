@@ -1,4 +1,4 @@
-version: 0.1.0
+version: 0.2.0
 type: plugin
 author: erickkkyt
 name: beatapi
@@ -6,8 +6,8 @@ label:
   en_US: BeatAPI
   zh_Hans: BeatAPI
 description:
-  en_US: Create and monitor asynchronous AI music video tasks with BeatAPI.
-  zh_Hans: 使用 BeatAPI 创建并查询异步 AI 音乐视频任务。
+  en_US: Create and monitor BeatAPI image, video, Effect, and music-video tasks.
+  zh_Hans: 使用 BeatAPI 创建并查询图片、视频、Effect 和音乐视频任务。
 icon: icon.svg
 resource:
   memory: 1048576
@@ -28,4 +28,3 @@ meta:
 created_at: 2026-07-15T00:00:00.000000000Z
 privacy: PRIVACY.md
 verified: false
-

@@ -5,8 +5,8 @@ identity:
     en_US: BeatAPI
     zh_Hans: BeatAPI
   description:
-    en_US: Build AI music video workflows with BeatAPI's asynchronous API.
-    zh_Hans: 使用 BeatAPI 异步 API 构建 AI 音乐视频工作流。
+    en_US: Build image, video, Effect, and music-video workflows with BeatAPI's asynchronous API.
+    zh_Hans: 使用 BeatAPI 异步 API 构建图片、视频、Effect 和音乐视频工作流。
   icon: icon.svg
   tags:
     - videos
@@ -28,10 +28,15 @@ credentials_for_provider:
     url: https://beatapi.io/dashboard/apikeys
 
 tools:
+  - tools/list_generation_models.yaml
+  - tools/create_image_task.yaml
+  - tools/create_video_task.yaml
+  - tools/list_effects.yaml
+  - tools/get_effect.yaml
+  - tools/create_effect_task.yaml
   - tools/create_music_video_task.yaml
   - tools/get_task.yaml
 
 extra:
   python:
     source: provider/beatapi.py
-

@@ -18,10 +18,9 @@ parameters:
       en_US: Task ID
       zh_Hans: 任务 ID
     human_description:
-      en_US: Task ID returned by Create Music Video Task, such as task_8K2qA.
-      zh_Hans: 由“创建音乐视频任务”返回的任务 ID，例如 task_8K2qA。
+      en_US: Task ID returned by any BeatAPI create tool, such as task_8K2qA.
+      zh_Hans: 由任一 BeatAPI 创建工具返回的任务 ID，例如 task_8K2qA。
     llm_description: BeatAPI task ID returned by a create action.
 extra:
   python:
     source: tools/get_task.py
-
