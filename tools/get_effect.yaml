@@ -1,0 +1,20 @@
+identity:
+  author: erickkkyt
+  name: get_effect
+  label: { en_US: Get Effect, zh_Hans: 获取 Effect }
+description:
+  human:
+    en_US: Get one published Effect's exact image-count, media, output, and option contract.
+    zh_Hans: 获取一个已发布 Effect 的准确图片数量、媒体、输出和选项契约。
+  llm: Read this immediately before Create Effect Task and obey the returned immutable version contract.
+parameters:
+  - name: effect_id
+    type: string
+    form: llm
+    required: true
+    label: { en_US: Effect ID, zh_Hans: Effect ID }
+    human_description: { en_US: Stable published Effect ID from List Effects., zh_Hans: 从查询 Effects 返回的稳定已发布 Effect ID。 }
+    llm_description: Pass the exact public Effect ID without inventing provider or template identifiers.
+extra:
+  python:
+    source: tools/get_effect.py

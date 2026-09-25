@@ -1,0 +1,105 @@
+identity:
+  author: erickkkyt
+  name: create_video_task
+  label: { en_US: Create Video Task, zh_Hans: 创建视频任务 }
+description:
+  human:
+    en_US: Create an asynchronous BeatAPI text, frame, or reference video task.
+    zh_Hans: 创建异步 BeatAPI 文生视频、首尾帧或多模态参考视频任务。
+  llm: Choose a model alias, send only fields supported by that model, then poll the returned task ID with Get Task.
+parameters:
+  - name: model
+    type: select
+    form: llm
+    required: true
+    label: { en_US: Model, zh_Hans: 模型 }
+    human_description: { en_US: Stable BeatAPI video model alias., zh_Hans: 稳定的 BeatAPI 视频模型别名。 }
+    llm_description: Use List Generation Models first when the model is not specified.
+    options:
+      - value: minimax-h3
+        label: { en_US: MiniMax H3, zh_Hans: MiniMax H3 }
+      - value: seedance-2
+        label: { en_US: Seedance 2, zh_Hans: Seedance 2 }
+      - value: seedance-2-fast
+        label: { en_US: Seedance 2 Fast, zh_Hans: Seedance 2 Fast }
+      - value: seedance-2-mini
+        label: { en_US: Seedance 2 Mini, zh_Hans: Seedance 2 Mini }
+      - value: veo-3.1
+        label: { en_US: Veo 3.1, zh_Hans: Veo 3.1 }
+      - value: seedance-2.5
+        label: { en_US: Seedance 2.5, zh_Hans: Seedance 2.5 }
+      - value: kling-3
+        label: { en_US: Kling 3, zh_Hans: Kling 3 }
+  - name: prompt
+    type: string
+    form: llm
+    required: true
+    label: { en_US: Prompt, zh_Hans: 提示词 }
+    human_description: { en_US: Video instructions, up to 5000 characters., zh_Hans: 视频生成说明，最多 5000 字符。 }
+    llm_description: Required video generation instructions.
+  - name: image_urls
+    type: string
+    form: llm
+    required: false
+    label: { en_US: Frame Image URLs, zh_Hans: 首尾帧图片 URL }
+    human_description: { en_US: One first frame or two first/last frame public HTTPS URLs., zh_Hans: 1 个首帧或 2 个首尾帧公开 HTTPS URL。 }
+    llm_description: Do not combine frame images with reference inputs.
+  - name: reference_image_urls
+    type: string
+    form: llm
+    required: false
+    label: { en_US: Reference Image URLs, zh_Hans: 参考图片 URL }
+    human_description: { en_US: Public HTTPS image references; model-specific maximums apply., zh_Hans: 公开 HTTPS 图片参考；数量上限取决于模型。 }
+    llm_description: Seedance 2.5 accepts up to 30; other models accept fewer.
+  - name: reference_video_urls
+    type: string
+    form: llm
+    required: false
+    label: { en_US: Reference Video URLs, zh_Hans: 参考视频 URL }
+    human_description: { en_US: Optional public HTTPS video references., zh_Hans: 可选的公开 HTTPS 参考视频。 }
+    llm_description: Supported by MiniMax H3 and Seedance routes; use model-specific limits.
+  - name: reference_audio_urls
+    type: string
+    form: llm
+    required: false
+    label: { en_US: Reference Audio URLs, zh_Hans: 参考音频 URL }
+    human_description: { en_US: Optional public HTTPS audio references., zh_Hans: 可选的公开 HTTPS 参考音频。 }
+    llm_description: Audio references also require a reference image or video on Seedance routes.
+  - name: duration
+    type: number
+    form: llm
+    required: false
+    label: { en_US: Duration, zh_Hans: 时长 }
+    human_description: { en_US: Optional output seconds within the selected model range., zh_Hans: 可选输出秒数，需符合模型范围。 }
+    llm_description: Most routes support 4-15 seconds; Seedance 2.5 supports up to 30; Veo 3.1 is fixed at 8.
+  - name: aspect_ratio
+    type: string
+    form: llm
+    required: false
+    label: { en_US: Aspect Ratio, zh_Hans: 画面比例 }
+    human_description: { en_US: Optional model-supported ratio., zh_Hans: 可选的模型支持比例。 }
+    llm_description: Use a model-supported value such as 16:9, 9:16, 1:1, or adaptive.
+  - name: resolution
+    type: string
+    form: llm
+    required: false
+    label: { en_US: Resolution, zh_Hans: 分辨率 }
+    human_description: { en_US: Optional model-specific resolution tier., zh_Hans: 可选的模型专属分辨率档位。 }
+    llm_description: Values differ by model, for example 768P, 720p, 1080p, 2K, or pro.
+  - name: generate_audio
+    type: boolean
+    form: llm
+    required: false
+    label: { en_US: Generate Audio, zh_Hans: 生成音频 }
+    human_description: { en_US: Generate synchronized audio where supported., zh_Hans: 在模型支持时生成同步音频。 }
+    llm_description: Do not send for models that do not support it.
+  - name: advanced_options_json
+    type: string
+    form: llm
+    required: false
+    label: { en_US: Advanced Options JSON, zh_Hans: 高级选项 JSON }
+    human_description: { en_US: Model-specific JSON such as quality, seed, sound, or multi_shots., zh_Hans: 模型专属 JSON，例如 quality、seed、sound 或 multi_shots。 }
+    llm_description: Use only documented fields for the selected model and do not duplicate structured parameters.
+extra:
+  python:
+    source: tools/create_video_task.py

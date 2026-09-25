@@ -1,0 +1,78 @@
+identity:
+  author: erickkkyt
+  name: create_image_task
+  label: { en_US: Create Image Task, zh_Hans: 创建图片任务 }
+description:
+  human:
+    en_US: Create an asynchronous image generation or editing task with a BeatAPI model alias.
+    zh_Hans: 使用 BeatAPI 模型别名创建异步图片生成或编辑任务。
+  llm: Create a BeatAPI image task, return its task ID, then use Get Task to poll it.
+parameters:
+  - name: model
+    type: select
+    form: llm
+    required: true
+    label: { en_US: Model, zh_Hans: 模型 }
+    human_description: { en_US: Stable BeatAPI image model alias., zh_Hans: 稳定的 BeatAPI 图片模型别名。 }
+    llm_description: Select the model that matches the requested input mode and output controls.
+    options:
+      - value: nano-banana
+        label: { en_US: Nano Banana, zh_Hans: Nano Banana }
+      - value: nano-banana-pro
+        label: { en_US: Nano Banana Pro, zh_Hans: Nano Banana Pro }
+      - value: gpt-image-2
+        label: { en_US: GPT Image 2, zh_Hans: GPT Image 2 }
+      - value: seedream-5-pro
+        label: { en_US: Seedream 5 Pro, zh_Hans: Seedream 5 Pro }
+  - name: prompt
+    type: string
+    form: llm
+    required: true
+    label: { en_US: Prompt, zh_Hans: 提示词 }
+    human_description: { en_US: Image generation or editing instructions, up to 5000 characters., zh_Hans: 图片生成或编辑说明，最多 5000 字符。 }
+    llm_description: Required generation instructions.
+  - name: image_urls
+    type: string
+    form: llm
+    required: false
+    label: { en_US: Reference Image URLs, zh_Hans: 参考图片 URL }
+    human_description: { en_US: Optional public HTTPS URLs separated by commas/newlines or a JSON array., zh_Hans: 可选的公开 HTTPS URL，使用逗号或换行分隔，也可传 JSON 数组。 }
+    llm_description: Omit for text-to-image. Limits vary by model; use no more than 8 for Nano Banana Pro, 16 for GPT Image 2, or 10 for Seedream 5 Pro.
+  - name: aspect_ratio
+    type: string
+    form: llm
+    required: false
+    label: { en_US: Aspect Ratio, zh_Hans: 画面比例 }
+    human_description: { en_US: Model-supported ratio such as 1:1, 16:9, 9:16, or auto., zh_Hans: 模型支持的比例，例如 1:1、16:9、9:16 或 auto。 }
+    llm_description: Optional model-supported aspect ratio.
+  - name: resolution
+    type: select
+    form: llm
+    required: false
+    label: { en_US: Resolution, zh_Hans: 分辨率 }
+    human_description: { en_US: Optional 1K, 2K, or 4K tier where supported., zh_Hans: 模型支持时可选 1K、2K 或 4K。 }
+    llm_description: Nano Banana does not accept this field. Seedream 5 Pro supports up to 2K.
+    options:
+      - value: 1K
+        label: { en_US: 1K, zh_Hans: 1K }
+      - value: 2K
+        label: { en_US: 2K, zh_Hans: 2K }
+      - value: 4K
+        label: { en_US: 4K, zh_Hans: 4K }
+  - name: output_format
+    type: string
+    form: llm
+    required: false
+    label: { en_US: Output Format, zh_Hans: 输出格式 }
+    human_description: { en_US: Optional png, jpeg, or jpg depending on the model., zh_Hans: 根据模型可选 png、jpeg 或 jpg。 }
+    llm_description: Omit when uncertain and use the model default.
+  - name: advanced_options_json
+    type: string
+    form: llm
+    required: false
+    label: { en_US: Advanced Options JSON, zh_Hans: 高级选项 JSON }
+    human_description: { en_US: Optional JSON object for future model-specific controls., zh_Hans: 可选 JSON 对象，用于后续模型专属参数。 }
+    llm_description: Only include fields documented for the selected model; do not duplicate structured parameters.
+extra:
+  python:
+    source: tools/create_image_task.py

@@ -1,0 +1,13 @@
+identity:
+  author: erickkkyt
+  name: list_generation_models
+  label: { en_US: List Generation Models, zh_Hans: 查询生成模型 }
+description:
+  human:
+    en_US: List the current BeatAPI image and video model aliases and supported input modes.
+    zh_Hans: 查询当前 BeatAPI 图片和视频模型别名及支持的输入模式。
+  llm: Call this before choosing a model. BeatAPI aliases are stable and do not expose internal provider routing.
+parameters: []
+extra:
+  python:
+    source: tools/list_generation_models.py

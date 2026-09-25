@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Mapping
 from typing import Any
-from urllib.parse import quote
+from urllib.parse import quote, urlencode
 
 
 RequestFn = Callable[..., Any]
@@ -30,7 +30,7 @@ def _default_request(**kwargs: Any) -> Any:
 
 
 class BeatAPIClient:
-    """Small public interface for authenticated BeatAPI workflow requests."""
+    """Small public interface for BeatAPI task and discovery requests."""
 
     def __init__(
         self,
@@ -52,6 +52,60 @@ class BeatAPIClient:
     def get_usage(self) -> dict[str, Any]:
         return self._request("GET", "/v1/usage")
 
+    def list_generation_models(self) -> list[dict[str, Any]]:
+        return self._list_data(self._request("GET", "/v1/media/models"))
+
+    def create_image_task(self, input_data: Mapping[str, Any]) -> dict[str, Any]:
+        return self._request(
+            "POST",
+            "/v1/images/tasks",
+            json=self._compact(input_data),
+        )
+
+    def create_video_task(self, input_data: Mapping[str, Any]) -> dict[str, Any]:
+        return self._request(
+            "POST",
+            "/v1/videos/tasks",
+            json=self._compact(input_data),
+        )
+
+    def list_effects(
+        self,
+        *,
+        output_type: str | None = None,
+        category: str | None = None,
+    ) -> list[dict[str, Any]]:
+        query = urlencode(
+            self._compact({"output_type": output_type, "category": category})
+        )
+        path = f"/v1/effects?{query}" if query else "/v1/effects"
+        return self._list_data(self._request("GET", path))
+
+    def get_effect(self, effect_id: str) -> dict[str, Any]:
+        normalized_effect_id = effect_id.strip()
+        if not normalized_effect_id:
+            raise ValueError("A BeatAPI Effect ID is required.")
+        return self._request(
+            "GET",
+            f"/v1/effects/{quote(normalized_effect_id, safe='')}",
+        )
+
+    def create_effect_task(
+        self,
+        input_data: Mapping[str, Any],
+        *,
+        idempotency_key: str,
+    ) -> dict[str, Any]:
+        normalized_key = idempotency_key.strip()
+        if not normalized_key:
+            raise ValueError("An idempotency key is required for Effect tasks.")
+        return self._request(
+            "POST",
+            "/v1/effects/tasks",
+            json=self._compact(input_data),
+            headers={"Idempotency-Key": normalized_key},
+        )
+
     def create_music_video_task(
         self,
         *,
@@ -64,15 +118,10 @@ class BeatAPIClient:
             "audio_url": audio_url,
             **options,
         }
-        compact_payload = {
-            key: value
-            for key, value in payload.items()
-            if value is not None and value != "" and value != []
-        }
         return self._request(
             "POST",
             "/v1/music-video/tasks",
-            json=compact_payload,
+            json=self._compact(payload),
         )
 
     def get_task(self, task_id: str) -> dict[str, Any]:
@@ -81,22 +130,53 @@ class BeatAPIClient:
             raise ValueError("A BeatAPI task ID is required.")
         return self._request("GET", f"/v1/tasks/{quote(normalized_task_id, safe='')}")
 
+    def search_capabilities(self, query: Mapping[str, Any]) -> dict[str, Any]:
+        return self._request_envelope("POST", "/v1/capabilities/search", json=query)
+
+    def inspect_capability(self, reference: str) -> dict[str, Any]:
+        return self._request_envelope(
+            "POST", "/v1/capabilities/inspect", json={"reference": reference}
+        )
+
+    def run_capability(self, request: Mapping[str, Any]) -> dict[str, Any]:
+        return self._request_envelope("POST", "/v1/capabilities/run", json=request)
+
     def _request(
         self,
         method: str,
         path: str,
         *,
         json: Mapping[str, Any] | None = None,
+        headers: Mapping[str, str] | None = None,
     ) -> dict[str, Any]:
+        payload = self._request_envelope(method, path, json=json, headers=headers)
+        data = payload.get("data")
+        if not isinstance(data, dict):
+            raise BeatAPIError(
+                "BeatAPI returned an unexpected response shape.",
+                code="invalid_beatapi_response",
+            )
+        return data
+
+    def _request_envelope(
+        self,
+        method: str,
+        path: str,
+        *,
+        json: Mapping[str, Any] | None = None,
+        headers: Mapping[str, str] | None = None,
+    ) -> dict[str, Any]:
+        request_headers = {
+            "Authorization": f"Bearer {self._api_key}",
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "User-Agent": "BeatAPI-Dify-Plugin/0.2.0",
+            **(headers or {}),
+        }
         response = self._request_fn(
             method=method,
             url=f"{self._base_url}{path}",
-            headers={
-                "Authorization": f"Bearer {self._api_key}",
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "User-Agent": "BeatAPI-Dify-Plugin/0.1.0",
-            },
+            headers=request_headers,
             json=json,
             timeout=self._timeout,
         )
@@ -120,11 +200,28 @@ class BeatAPIClient:
                 status_code=status_code,
             )
 
-        data = payload.get("data") if isinstance(payload, dict) else None
-        if not isinstance(data, dict):
+        if not isinstance(payload, dict):
             raise BeatAPIError(
                 "BeatAPI returned an unexpected response shape.",
                 code="invalid_beatapi_response",
                 status_code=status_code,
+            )
+        return payload
+
+    @staticmethod
+    def _compact(payload: Mapping[str, Any]) -> dict[str, Any]:
+        return {
+            key: value
+            for key, value in payload.items()
+            if value is not None and value != "" and value != []
+        }
+
+    @staticmethod
+    def _list_data(payload: Mapping[str, Any]) -> list[dict[str, Any]]:
+        data = payload.get("data")
+        if not isinstance(data, list) or not all(isinstance(item, dict) for item in data):
+            raise BeatAPIError(
+                "BeatAPI returned an unexpected list response shape.",
+                code="invalid_beatapi_response",
             )
         return data

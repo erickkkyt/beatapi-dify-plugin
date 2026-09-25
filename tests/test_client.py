@@ -26,6 +26,41 @@ class RequestRecorder:
 
 
 class BeatAPIClientTests(unittest.TestCase):
+    def test_capability_discovery_and_run_preserve_response_envelopes(self) -> None:
+        request = RequestRecorder(
+            FakeResponse(
+                200,
+                {"data": {"data": [{"reference": "model:gpt-5.6-luna"}]}},
+            )
+        )
+        client = BeatAPIClient("sk_test", request=request)
+
+        search = client.search_capabilities({"query": "text model", "kind": "model"})
+        self.assertEqual(search["data"]["data"][0]["reference"], "model:gpt-5.6-luna")
+
+        request.response = FakeResponse(
+            200, {"data": {"reference": "model:gpt-5.6-luna", "input_schema": {}}}
+        )
+        inspected = client.inspect_capability("model:gpt-5.6-luna")
+        self.assertEqual(inspected["data"]["reference"], "model:gpt-5.6-luna")
+
+        request.response = FakeResponse(
+            200,
+            {
+                "object": "text.result",
+                "output_text": "Hello",
+                "request_id": "req_123",
+            },
+        )
+        result = client.run_capability(
+            {"reference": "model:gpt-5.6-luna", "input": {"input": "Say hello"}}
+        )
+        self.assertEqual(result["output_text"], "Hello")
+        self.assertEqual(
+            [call["url"].rsplit("/", 1)[-1] for call in request.calls],
+            ["search", "inspect", "run"],
+        )
+
     def test_get_usage_authenticates_and_unwraps_the_public_envelope(self) -> None:
         request = RequestRecorder(
             FakeResponse(
@@ -73,6 +108,45 @@ class BeatAPIClientTests(unittest.TestCase):
                 "audio_url": "https://media.example.com/song.mp3",
                 "prompt": "Neon city performance",
             },
+        )
+
+    def test_unified_generation_and_effect_methods_use_public_routes(self) -> None:
+        request = RequestRecorder(
+            FakeResponse(200, {"data": {"object": "list", "data": []}})
+        )
+        client = BeatAPIClient("sk_test", request=request)
+
+        self.assertEqual(client.list_generation_models(), [])
+        client.create_image_task({"model": "nano-banana", "prompt": "Still"})
+        client.create_video_task({"model": "seedance-2-mini", "prompt": "Orbit"})
+        self.assertEqual(client.list_effects(output_type="video"), [])
+
+        request.response = FakeResponse(
+            200, {"data": {"id": "video-muscle-max", "object": "effect"}}
+        )
+        client.get_effect("video/muscle")
+        client.create_effect_task(
+            {
+                "effect_id": "video-muscle-max",
+                "images": ["https://media.example.com/portrait.png"],
+            },
+            idempotency_key="effect-dify-123",
+        )
+
+        self.assertEqual(
+            [(call["method"], call["url"]) for call in request.calls],
+            [
+                ("GET", "https://api.beatapi.io/v1/media/models"),
+                ("POST", "https://api.beatapi.io/v1/images/tasks"),
+                ("POST", "https://api.beatapi.io/v1/videos/tasks"),
+                ("GET", "https://api.beatapi.io/v1/effects?output_type=video"),
+                ("GET", "https://api.beatapi.io/v1/effects/video%2Fmuscle"),
+                ("POST", "https://api.beatapi.io/v1/effects/tasks"),
+            ],
+        )
+        self.assertEqual(
+            request.calls[-1]["headers"]["Idempotency-Key"],
+            "effect-dify-123",
         )
 
     def test_api_errors_keep_the_public_error_code_and_request_id(self) -> None:

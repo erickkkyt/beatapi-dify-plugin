@@ -1,0 +1,49 @@
+identity:
+  author: erickkkyt
+  name: create_effect_task
+  label: { en_US: Create Effect Task, zh_Hans: 创建 Effect 任务 }
+description:
+  human:
+    en_US: Create an asynchronous image or video Effect task from public HTTPS images.
+    zh_Hans: 使用公开 HTTPS 图片创建异步图片或视频 Effect 任务。
+  llm: Get the selected Effect first, obey its current version contract, create the task once, then poll it with Get Task.
+parameters:
+  - name: effect_id
+    type: string
+    form: llm
+    required: true
+    label: { en_US: Effect ID, zh_Hans: Effect ID }
+    human_description: { en_US: Stable public Effect ID., zh_Hans: 稳定的公开 Effect ID。 }
+    llm_description: Use an exact ID returned by List Effects or Get Effect.
+  - name: effect_version
+    type: number
+    form: llm
+    required: false
+    min: 1
+    label: { en_US: Effect Version, zh_Hans: Effect 版本 }
+    human_description: { en_US: Optional immutable version; omit to use the current published version., zh_Hans: 可选不可变版本；留空使用当前已发布版本。 }
+    llm_description: Prefer the version returned by Get Effect when reproducibility matters.
+  - name: image_urls
+    type: string
+    form: llm
+    required: true
+    label: { en_US: Image URLs, zh_Hans: 图片 URL }
+    human_description: { en_US: Public HTTPS images in the order required by the Effect, comma/newline text or a JSON array., zh_Hans: 按 Effect 要求顺序提供公开 HTTPS 图片，可用逗号、换行或 JSON 数组。 }
+    llm_description: Supply the exact count and accepted media types from Get Effect, with no more than seven images.
+  - name: options_json
+    type: string
+    form: llm
+    required: false
+    label: { en_US: Options JSON, zh_Hans: 选项 JSON }
+    human_description: { en_US: Optional JSON object containing only controls exposed by the selected Effect., zh_Hans: 可选 JSON 对象，只能包含该 Effect 暴露的控制项。 }
+    llm_description: Supported keys can include aspect_ratio, resolution, duration, bgm, and seed; the Effect contract is authoritative.
+  - name: idempotency_key
+    type: string
+    form: llm
+    required: false
+    label: { en_US: Idempotency Key, zh_Hans: 幂等键 }
+    human_description: { en_US: Stable retry key; one is generated when omitted., zh_Hans: 稳定重试键；留空时自动生成。 }
+    llm_description: Reuse the same key only when retrying the exact same request body.
+extra:
+  python:
+    source: tools/create_effect_task.py

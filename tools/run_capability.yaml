@@ -1,0 +1,92 @@
+identity:
+  author: erickkkyt
+  name: run_capability
+  label: { en_US: Run Capability, zh_Hans: 调用能力 }
+description:
+  human:
+    en_US: Run an inspected BeatAPI capability, poll its task, or retrieve a stored result. Starting a run may spend credits.
+    zh_Hans: 调用已查看的 BeatAPI 能力、查询异步任务或取回结果。开始调用可能消耗余额。
+  llm: Inspect first and match its input_schema. Start may spend credits. For async results use the same reference and task_id with operation status. For large sync data use operation result with request_id.
+parameters:
+  - name: reference
+    type: string
+    form: llm
+    required: true
+    label: { en_US: Capability Reference, zh_Hans: 能力引用 }
+    human_description: { en_US: Exact reference returned by Search and Inspect., zh_Hans: 搜索与查看返回的完整 reference。 }
+    llm_description: Copy the inspected reference exactly.
+  - name: operation
+    type: select
+    form: llm
+    required: false
+    default: start
+    label: { en_US: Operation, zh_Hans: 操作 }
+    human_description: { en_US: Start a run, poll status, or retrieve a result., zh_Hans: 开始调用、查询状态或取回结果。 }
+    llm_description: Use start once; then status for async tasks, or result for a stored synchronous result.
+    options:
+      - value: start
+        label: { en_US: Start, zh_Hans: 开始 }
+      - value: status
+        label: { en_US: Status, zh_Hans: 状态 }
+      - value: result
+        label: { en_US: Result, zh_Hans: 结果 }
+  - name: input_json
+    type: string
+    form: llm
+    required: false
+    label: { en_US: Input JSON, zh_Hans: 输入 JSON }
+    human_description: { en_US: JSON object matching Inspect input_schema; required for start., zh_Hans: 符合 Inspect 的 input_schema 的 JSON 对象；开始调用时必填。 }
+    llm_description: Valid JSON object matching the inspected required fields. For image or video include the model field when required.
+  - name: task_id
+    type: string
+    form: llm
+    required: false
+    label: { en_US: Task ID, zh_Hans: 任务 ID }
+    human_description: { en_US: Required for status., zh_Hans: 查询状态时必填。 }
+    llm_description: Use the task ID returned by start.
+  - name: request_id
+    type: string
+    form: llm
+    required: false
+    label: { en_US: Request ID, zh_Hans: 请求 ID }
+    human_description: { en_US: Required for result., zh_Hans: 取回结果时必填。 }
+    llm_description: Use the request ID returned by a synchronous start.
+  - name: view
+    type: select
+    form: llm
+    required: false
+    default: preview
+    label: { en_US: Result View, zh_Hans: 结果视图 }
+    human_description: { en_US: Preview keeps large responses small; full returns all fields., zh_Hans: 预览会缩小大结果；完整视图返回所有字段。 }
+    llm_description: Prefer preview for social data. Request full only when needed.
+    options:
+      - value: preview
+        label: { en_US: Preview, zh_Hans: 预览 }
+      - value: full
+        label: { en_US: Full, zh_Hans: 完整 }
+  - name: idempotency_key
+    type: string
+    form: llm
+    required: false
+    label: { en_US: Idempotency Key, zh_Hans: 幂等键 }
+    human_description: { en_US: Reuse only when retrying the same start request., zh_Hans: 仅在重试同一次开始请求时复用。 }
+    llm_description: Unique for each new task; reuse only for a network retry of the same request.
+  - name: max_items
+    type: number
+    form: llm
+    required: false
+    min: 1
+    max: 50
+    label: { en_US: Preview Item Limit, zh_Hans: 预览条数 }
+    human_description: { en_US: Keep 1 to 50 list items when using preview., zh_Hans: 预览时保留 1 到 50 条列表数据。 }
+    llm_description: Optional preview limit, at most 50.
+  - name: fields_json
+    type: string
+    form: llm
+    required: false
+    label: { en_US: Fields JSON, zh_Hans: 字段路径 JSON }
+    human_description: { en_US: Optional JSON array of paths for a result view., zh_Hans: 可选的字段路径 JSON 数组，用于筛选结果。 }
+    llm_description: Optional JSON string array of fields, such as ["items[].title"].
+extra:
+  python:
+    source: tools/run_capability.py
