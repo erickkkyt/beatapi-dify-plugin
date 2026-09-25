@@ -1,7 +1,7 @@
 # BeatAPI for Dify
 
-Create and monitor asynchronous BeatAPI image, video, Effect, and music-video
-tasks from Dify Workflows, Chatflows, and Agents.
+Discover BeatAPI models, social data, web tools and workflows, and create or
+monitor image, video, Effect, and music-video tasks from Dify.
 
 - Website: https://beatapi.io/
 - API documentation: https://docs.beatapi.io/
@@ -10,7 +10,13 @@ tasks from Dify Workflows, Chatflows, and Agents.
 
 ## Tools
 
-The plugin exposes eight tools against the current BeatAPI public contract:
+The plugin exposes eleven tools against the current BeatAPI public contract:
+
+- **Search Capabilities**, **Inspect Capability**, and **Run Capability** —
+  discover any current model, social data, web, or workflow capability; inspect
+  its fields and price; then start it or retrieve its result. These are advanced
+  tools for agents that discover capabilities at run time. A Run start may spend
+  BeatAPI credits.
 
 - **List Generation Models** — discover stable image/video aliases and input modes.
 - **Create Image Task** — generate or edit images with `nano-banana`,
@@ -26,6 +32,10 @@ The plugin exposes eight tools against the current BeatAPI public contract:
 
 Model aliases are BeatAPI's public contract. The plugin never exposes or
 selects internal providers, templates, or routing IDs.
+
+For the native Dify LLM node, configure BeatAPI as an OpenAI-compatible model
+provider using `https://api.beatapi.io/v1`. The tool plugin can also run text
+models through Run, but it does not add them to Dify's native model picker.
 
 ### Create Music Video Task
 
@@ -60,8 +70,8 @@ In Dify, open **Plugins > Install Plugin > GitHub**, then enter:
 1. Create a revocable API key at https://beatapi.io/dashboard/apikeys.
 2. Open **Tools > BeatAPI > Authorize** in Dify.
 3. Paste the API key. Dify verifies it with `GET /v1/usage`.
-4. Add the discovery/create tools you need plus **Get Task** to a Workflow,
-   Chatflow, or Agent.
+4. Add the named media tools you need to a Workflow or Chatflow. For an Agent
+   that discovers capabilities dynamically, add Search, Inspect, and Run.
 
 The API key is sent only in the `Authorization: Bearer` header to
 `https://api.beatapi.io`. Never place it in prompts or tool parameters.

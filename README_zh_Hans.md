@@ -9,7 +9,13 @@ BeatAPI Dify 工具插件可以在 Workflow、Chatflow 和 Agent 中创建并查
 
 ## 工具
 
-插件按照当前 BeatAPI API 契约提供 8 个工具：
+新增 **搜索能力**、**查看能力参数** 和 **调用能力**，覆盖当前模型、社媒数据、
+联网工具和工作流。它们适合智能体按需求动态发现能力；Run 的开始操作可能扣费。
+人工编排的工作流优先使用已有的图片、视频、Effect 和音乐视频专用工具。
+文本模型若需显示在 Dify 原生 LLM 节点，仍需另行配置 OpenAI 兼容模型供应商，
+API 地址为 `https://api.beatapi.io/v1`。
+
+插件按照当前 BeatAPI API 契约提供 11 个工具：
 
 - **查询生成模型**：读取稳定的图片/视频模型别名和输入模式。
 - **创建图片任务**：支持 `nano-banana`、`nano-banana-pro`、`gpt-image-2`、

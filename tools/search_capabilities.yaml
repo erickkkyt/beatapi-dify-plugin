@@ -1,0 +1,57 @@
+identity:
+  author: erickkkyt
+  name: search_capabilities
+  label: { en_US: Search Capabilities, zh_Hans: 搜索能力 }
+description:
+  human:
+    en_US: Find current BeatAPI social data, text, image, video, and workflow capabilities without spending credits.
+    zh_Hans: 免费查找 BeatAPI 当前的社媒数据、文本、图片、视频和工作流能力。
+  llm: Search before running. Copy a returned reference exactly, then inspect it. Search is free and does not execute a capability.
+parameters:
+  - name: query
+    type: string
+    form: llm
+    required: false
+    label: { en_US: Query, zh_Hans: 查询内容 }
+    human_description: { en_US: What you need, such as "image model" or "Xiaohongshu search notes". Blank returns a catalog map., zh_Hans: 输入需求，例如“图片模型”或“小红书搜索笔记”；留空返回目录概览。 }
+    llm_description: Describe the user's task. Do not invent a capability reference.
+  - name: kind
+    type: select
+    form: llm
+    required: false
+    label: { en_US: Kind, zh_Hans: 能力类型 }
+    human_description: { en_US: Optional result filter., zh_Hans: 可选的结果类型筛选。 }
+    llm_description: Optional model, data, or workflow filter.
+    options:
+      - value: model
+        label: { en_US: Model, zh_Hans: 模型 }
+      - value: data
+        label: { en_US: Data, zh_Hans: 数据 }
+      - value: workflow
+        label: { en_US: Workflow, zh_Hans: 工作流 }
+  - name: platform
+    type: string
+    form: llm
+    required: false
+    label: { en_US: Platform, zh_Hans: 平台 }
+    human_description: { en_US: Optional platform, such as xiaohongshu., zh_Hans: 可选的平台，例如 xiaohongshu。 }
+    llm_description: Optional platform name or slug.
+  - name: limit
+    type: number
+    form: llm
+    required: false
+    min: 1
+    max: 50
+    label: { en_US: Result Limit, zh_Hans: 结果数量 }
+    human_description: { en_US: 1 to 50 results., zh_Hans: 1 到 50 条结果。 }
+    llm_description: Keep results short unless the user asks for more.
+  - name: cursor
+    type: string
+    form: llm
+    required: false
+    label: { en_US: Next Cursor, zh_Hans: 下一页游标 }
+    human_description: { en_US: next_cursor from the previous search page., zh_Hans: 上一页返回的 next_cursor。 }
+    llm_description: Pass next_cursor unchanged to read the next page.
+extra:
+  python:
+    source: tools/search_capabilities.py

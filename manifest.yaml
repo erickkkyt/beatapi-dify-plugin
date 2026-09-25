@@ -6,8 +6,8 @@ label:
   en_US: BeatAPI
   zh_Hans: BeatAPI
 description:
-  en_US: Create and monitor BeatAPI image, video, Effect, and music-video tasks.
-  zh_Hans: 使用 BeatAPI 创建并查询图片、视频、Effect 和音乐视频任务。
+  en_US: Discover and run BeatAPI model, social data, web, Effect, and media capabilities.
+  zh_Hans: 搜索并调用 BeatAPI 模型、社媒数据、联网、Effect 和媒体能力。
 icon: icon.svg
 resource:
   memory: 1048576

@@ -1,0 +1,20 @@
+identity:
+  author: erickkkyt
+  name: inspect_capability
+  label: { en_US: Inspect Capability, zh_Hans: 查看能力参数 }
+description:
+  human:
+    en_US: Read the exact input schema, price, readiness, and execution mode before running a capability.
+    zh_Hans: 在调用前查看能力的准确输入结构、价格、可用状态和执行方式。
+  llm: Copy a reference from Search exactly. Inspect is free. Run only when readiness is ready or runnable, with the required input fields.
+parameters:
+  - name: reference
+    type: string
+    form: llm
+    required: true
+    label: { en_US: Capability Reference, zh_Hans: 能力引用 }
+    human_description: { en_US: Exact reference returned by Search, for example model:gpt-5.6-luna., zh_Hans: 搜索结果中的完整 reference，例如 model:gpt-5.6-luna。 }
+    llm_description: Copy exactly from Search; never construct or guess one.
+extra:
+  python:
+    source: tools/inspect_capability.py

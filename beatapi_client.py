@@ -130,7 +130,35 @@ class BeatAPIClient:
             raise ValueError("A BeatAPI task ID is required.")
         return self._request("GET", f"/v1/tasks/{quote(normalized_task_id, safe='')}")
 
+    def search_capabilities(self, query: Mapping[str, Any]) -> dict[str, Any]:
+        return self._request_envelope("POST", "/v1/capabilities/search", json=query)
+
+    def inspect_capability(self, reference: str) -> dict[str, Any]:
+        return self._request_envelope(
+            "POST", "/v1/capabilities/inspect", json={"reference": reference}
+        )
+
+    def run_capability(self, request: Mapping[str, Any]) -> dict[str, Any]:
+        return self._request_envelope("POST", "/v1/capabilities/run", json=request)
+
     def _request(
+        self,
+        method: str,
+        path: str,
+        *,
+        json: Mapping[str, Any] | None = None,
+        headers: Mapping[str, str] | None = None,
+    ) -> dict[str, Any]:
+        payload = self._request_envelope(method, path, json=json, headers=headers)
+        data = payload.get("data")
+        if not isinstance(data, dict):
+            raise BeatAPIError(
+                "BeatAPI returned an unexpected response shape.",
+                code="invalid_beatapi_response",
+            )
+        return data
+
+    def _request_envelope(
         self,
         method: str,
         path: str,
@@ -172,14 +200,13 @@ class BeatAPIClient:
                 status_code=status_code,
             )
 
-        data = payload.get("data") if isinstance(payload, dict) else None
-        if not isinstance(data, dict):
+        if not isinstance(payload, dict):
             raise BeatAPIError(
                 "BeatAPI returned an unexpected response shape.",
                 code="invalid_beatapi_response",
                 status_code=status_code,
             )
-        return data
+        return payload
 
     @staticmethod
     def _compact(payload: Mapping[str, Any]) -> dict[str, Any]:

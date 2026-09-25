@@ -26,6 +26,41 @@ class RequestRecorder:
 
 
 class BeatAPIClientTests(unittest.TestCase):
+    def test_capability_discovery_and_run_preserve_response_envelopes(self) -> None:
+        request = RequestRecorder(
+            FakeResponse(
+                200,
+                {"data": {"data": [{"reference": "model:gpt-5.6-luna"}]}},
+            )
+        )
+        client = BeatAPIClient("sk_test", request=request)
+
+        search = client.search_capabilities({"query": "text model", "kind": "model"})
+        self.assertEqual(search["data"]["data"][0]["reference"], "model:gpt-5.6-luna")
+
+        request.response = FakeResponse(
+            200, {"data": {"reference": "model:gpt-5.6-luna", "input_schema": {}}}
+        )
+        inspected = client.inspect_capability("model:gpt-5.6-luna")
+        self.assertEqual(inspected["data"]["reference"], "model:gpt-5.6-luna")
+
+        request.response = FakeResponse(
+            200,
+            {
+                "object": "text.result",
+                "output_text": "Hello",
+                "request_id": "req_123",
+            },
+        )
+        result = client.run_capability(
+            {"reference": "model:gpt-5.6-luna", "input": {"input": "Say hello"}}
+        )
+        self.assertEqual(result["output_text"], "Hello")
+        self.assertEqual(
+            [call["url"].rsplit("/", 1)[-1] for call in request.calls],
+            ["search", "inspect", "run"],
+        )
+
     def test_get_usage_authenticates_and_unwraps_the_public_envelope(self) -> None:
         request = RequestRecorder(
             FakeResponse(

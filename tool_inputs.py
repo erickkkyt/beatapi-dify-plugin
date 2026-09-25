@@ -5,6 +5,26 @@ import re
 from urllib.parse import urlparse
 
 
+def parse_json_object(value: str, *, name: str = "Input") -> dict:
+    try:
+        parsed = json.loads(value)
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"{name} must be valid JSON.") from exc
+    if not isinstance(parsed, dict):
+        raise ValueError(f"{name} must be a JSON object.")
+    return parsed
+
+
+def parse_json_fields(value: str) -> list[str]:
+    try:
+        parsed = json.loads(value)
+    except json.JSONDecodeError as exc:
+        raise ValueError("Fields must be a JSON array of paths.") from exc
+    if not isinstance(parsed, list) or not all(isinstance(item, str) for item in parsed):
+        raise ValueError("Fields must be a JSON array of paths.")
+    return parsed
+
+
 def parse_https_urls(
     value: str,
     *,

@@ -28,6 +28,9 @@ credentials_for_provider:
     url: https://beatapi.io/dashboard/apikeys
 
 tools:
+  - tools/search_capabilities.yaml
+  - tools/inspect_capability.yaml
+  - tools/run_capability.yaml
   - tools/list_generation_models.yaml
   - tools/create_image_task.yaml
   - tools/create_video_task.yaml
