@@ -6,7 +6,7 @@ description:
   human:
     en_US: Read the exact input schema, price, readiness, and execution mode before running a capability.
     zh_Hans: 在调用前查看能力的准确输入结构、价格、可用状态和执行方式。
-  llm: Copy a reference from Search exactly. Inspect is free. Run only when readiness is ready or runnable, with the required input fields.
+  llm: Copy a reference from Search exactly. Inspect is free. Run only when readiness permits execution and run_supported is true; otherwise follow the returned execution strategy and documented direct API.
 parameters:
   - name: reference
     type: string

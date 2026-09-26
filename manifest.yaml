@@ -1,7 +1,9 @@
-version: 0.2.0
+version: 0.2.1
 type: plugin
 author: erickkkyt
 name: beatapi
+repo: https://github.com/erickkkyt/beatapi-dify-plugin
+contact: support@beatapi.io
 label:
   en_US: BeatAPI
   zh_Hans: BeatAPI

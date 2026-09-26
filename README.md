@@ -13,10 +13,11 @@ monitor image, video, Effect, and music-video tasks from Dify.
 The plugin exposes eleven tools against the current BeatAPI public contract:
 
 - **Search Capabilities**, **Inspect Capability**, and **Run Capability** —
-  discover any current model, social data, web, or workflow capability; inspect
-  its fields and price; then start it or retrieve its result. These are advanced
-  tools for agents that discover capabilities at run time. A Run start may spend
-  BeatAPI credits.
+  discover current model, social data, web, or workflow capabilities and inspect
+  their fields, price, readiness, and execution strategy. Use Run only when
+  Inspect says it is supported; direct API capabilities use their documented
+  endpoint instead. These are advanced tools for agents that discover
+  capabilities at run time. A Run start may spend BeatAPI credits.
 
 - **List Generation Models** — discover stable image/video aliases and input modes.
 - **Create Image Task** — generate or edit images with `nano-banana`,
@@ -34,8 +35,9 @@ Model aliases are BeatAPI's public contract. The plugin never exposes or
 selects internal providers, templates, or routing IDs.
 
 For the native Dify LLM node, configure BeatAPI as an OpenAI-compatible model
-provider using `https://api.beatapi.io/v1`. The tool plugin can also run text
-models through Run, but it does not add them to Dify's native model picker.
+provider using `https://api.beatapi.io/v1`. Text models that Inspect marks as
+`direct_api` use their documented endpoint, not the Run tool. This tool plugin
+does not add models to Dify's native model picker.
 
 ### Create Music Video Task
 
