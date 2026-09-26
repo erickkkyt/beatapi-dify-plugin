@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.1
+
+- Clarify that Run is limited to capabilities whose inspected execution
+  strategy supports it; document direct API alternatives.
+- Expand the plugin privacy notice for capability inputs and correct the
+  BeatAPI privacy-policy URL.
+
 ## 0.2.0
 
 - Add Search, Inspect, and Run tools for social data, text models, web tools,

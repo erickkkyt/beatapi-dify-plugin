@@ -6,7 +6,7 @@ description:
   human:
     en_US: Run an inspected BeatAPI capability, poll its task, or retrieve a stored result. Starting a run may spend credits.
     zh_Hans: 调用已查看的 BeatAPI 能力、查询异步任务或取回结果。开始调用可能消耗余额。
-  llm: Inspect first and match its input_schema. Start may spend credits. For async results use the same reference and task_id with operation status. For large sync data use operation result with request_id.
+  llm: Inspect first and use Run only when readiness permits execution and run_supported is true. Match input_schema. Start may spend credits. For async results use the same reference and task_id with operation status. For large sync data use operation result with request_id.
 parameters:
   - name: reference
     type: string
