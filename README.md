@@ -113,3 +113,13 @@ dify plugin package ./beatapi
 ## Support
 
 Email support@beatapi.io or visit https://beatapi.io/.
+
+## Current gateway update (0.3.0)
+
+Added named Web Search, Read, Map and Research tools with JSON input matching
+`https://docs.beatapi.io/web-search`. Search supports `view` and `group_by`.
+Run already supports preview, fields and free stored-result reads. Web Research
+can return a pending task after 85 seconds; use Run operation=status to poll,
+never start another research request. Requests preserve raw result envelopes,
+use bounded operation-specific timeouts and do not follow authenticated redirects.
+Models and pricing are discovered at runtime through Search and Inspect.

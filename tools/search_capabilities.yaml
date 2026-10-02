@@ -52,6 +52,28 @@ parameters:
     label: { en_US: Next Cursor, zh_Hans: 下一页游标 }
     human_description: { en_US: next_cursor from the previous search page., zh_Hans: 上一页返回的 next_cursor。 }
     llm_description: Pass next_cursor unchanged to read the next page.
+  - name: view
+    type: select
+    form: llm
+    required: false
+    label: { en_US: Search View, zh_Hans: 搜索视图 }
+    human_description: { en_US: Compact cards or full contracts., zh_Hans: 简洁卡片或完整接口。 }
+    llm_description: Default compact; full includes schemas.
+    options:
+      - value: compact
+        label: { en_US: Compact, zh_Hans: 简洁 }
+      - value: full
+        label: { en_US: Full, zh_Hans: 完整 }
+  - name: group_by
+    type: select
+    form: llm
+    required: false
+    label: { en_US: Group By, zh_Hans: 分组方式 }
+    human_description: { en_US: Group by function., zh_Hans: 按功能分组。 }
+    llm_description: Set function to obtain a grouped overview.
+    options:
+      - value: function
+        label: { en_US: Function, zh_Hans: 功能 }
 extra:
   python:
     source: tools/search_capabilities.py

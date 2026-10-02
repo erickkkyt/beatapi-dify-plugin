@@ -12,7 +12,7 @@ class SearchCapabilitiesTool(Tool):
         try:
             query = {
                 key: tool_parameters[key]
-                for key in ("query", "kind", "platform", "limit", "cursor")
+                for key in ("query", "kind", "platform", "limit", "cursor", "view", "group_by")
                 if tool_parameters.get(key) not in (None, "")
             }
             client = BeatAPIClient(str(self.runtime.credentials.get("api_key", "")))

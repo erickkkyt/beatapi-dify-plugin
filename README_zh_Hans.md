@@ -62,3 +62,11 @@ API Key 只会通过 `Authorization: Bearer` 请求头发送到
 ## 支持
 
 联系 support@beatapi.io 或访问 https://beatapi.io/。
+
+## 最新网关更新（0.3.0）
+
+增加 Web Search、Read、Map、Research 四个具名工具，输入 JSON 对齐当前公开文档。
+能力搜索支持 view 和 group_by；Run 支持预览、字段选择和一小时内免费读取已有结果。
+研究请求可能返回待处理任务，请用 Run 的 status 操作轮询，避免重复创建研究。
+请求保留原始返回结构，使用按操作设置的超时，并禁止携带凭据跟随重定向。
+模型与价格以运行时 Search、Inspect 为准。
