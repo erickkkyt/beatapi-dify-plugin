@@ -20,14 +20,18 @@ credentials_for_provider:
       en_US: BeatAPI API Key
       zh_Hans: BeatAPI API Key
     placeholder:
-      en_US: sk_...
-      zh_Hans: sk_...
+      en_US: sk-...
+      zh_Hans: sk-...
     help:
       en_US: Create a revocable API key in the BeatAPI dashboard.
       zh_Hans: 在 BeatAPI 控制台创建可随时撤销的 API Key。
     url: https://beatapi.io/dashboard/apikeys
 
 tools:
+  - tools/web_search.yaml
+  - tools/web_read.yaml
+  - tools/web_map.yaml
+  - tools/web_research.yaml
   - tools/search_capabilities.yaml
   - tools/inspect_capability.yaml
   - tools/run_capability.yaml

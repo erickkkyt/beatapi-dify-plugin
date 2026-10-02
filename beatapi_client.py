@@ -141,6 +141,11 @@ class BeatAPIClient:
     def run_capability(self, request: Mapping[str, Any]) -> dict[str, Any]:
         return self._request_envelope("POST", "/v1/capabilities/run", json=request)
 
+    def web_call(self, action: str, input_data: Mapping[str, Any]) -> dict[str, Any]:
+        if action not in ("search", "read", "map", "research"):
+            raise ValueError("Unknown Web action.")
+        return self._request_envelope("POST", f"/v1/web/{action}", json=input_data)
+
     def _request(
         self,
         method: str,
@@ -170,7 +175,7 @@ class BeatAPIClient:
             "Authorization": f"Bearer {self._api_key}",
             "Accept": "application/json",
             "Content-Type": "application/json",
-            "User-Agent": "BeatAPI-Dify-Plugin/0.2.0",
+            "User-Agent": "BeatAPI-Dify-Plugin/0.3.0",
             **(headers or {}),
         }
         response = self._request_fn(
@@ -178,7 +183,8 @@ class BeatAPIClient:
             url=f"{self._base_url}{path}",
             headers=request_headers,
             json=json,
-            timeout=self._timeout,
+            timeout=max(self._timeout, {"/v1/capabilities/run":95,"/v1/web/research":95,"/v1/web/read":75,"/v1/web/map":60}.get(path,30)),
+            allow_redirects=False,
         )
 
         try:

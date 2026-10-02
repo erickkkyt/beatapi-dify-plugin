@@ -1,0 +1,20 @@
+identity:
+  author: erickkkyt
+  name: web_map
+  label: { en_US: Map a Website, zh_Hans: 站点地图 }
+description:
+  human:
+    en_US: Map a Website through BeatAPI. This is a paid capability.
+    zh_Hans: 通过 BeatAPI 站点地图，按实际调用计费。
+  llm: 'url is required; optional limit (1-100), max_depth (1-3), include_external, select_paths, exclude_paths. Billed per returned URL.'
+parameters:
+  - name: input_json
+    type: string
+    form: llm
+    required: true
+    label: { en_US: Input JSON, zh_Hans: 输入 JSON }
+    human_description: { en_US: Request object from the current Web API contract., zh_Hans: 当前 Web API 接口定义的请求对象。 }
+    llm_description: 'url is required; optional limit (1-100), max_depth (1-3), include_external, select_paths, exclude_paths. Billed per returned URL.'
+extra:
+  python:
+    source: tools/web_map.py

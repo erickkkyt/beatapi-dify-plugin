@@ -26,6 +26,13 @@ class RequestRecorder:
 
 
 class BeatAPIClientTests(unittest.TestCase):
+    def test_web_research_preserves_pending_task_and_uses_a_long_timeout(self) -> None:
+        request = RequestRecorder(FakeResponse(202, {"request_id":"task_fixture", "next":{"action":"status"}}))
+        result = BeatAPIClient("fixture",request=request).web_call("research", {"query":"test"})
+        self.assertEqual(result["request_id"],"task_fixture")
+        self.assertEqual(request.calls[0]["timeout"],95)
+        self.assertFalse(request.calls[0]["allow_redirects"])
+
     def test_capability_discovery_and_run_preserve_response_envelopes(self) -> None:
         request = RequestRecorder(
             FakeResponse(

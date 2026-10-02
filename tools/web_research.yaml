@@ -1,0 +1,20 @@
+identity:
+  author: erickkkyt
+  name: web_research
+  label: { en_US: Research the Web, zh_Hans: 联网研究 }
+description:
+  human:
+    en_US: Research the Web through BeatAPI. This is a paid capability.
+    zh_Hans: 通过 BeatAPI 联网研究，按实际调用计费。
+  llm: 'query is required; optional include_x. X sources are best effort. A 202 result contains a task: use Run Capability operation status; never restart to poll.'
+parameters:
+  - name: input_json
+    type: string
+    form: llm
+    required: true
+    label: { en_US: Input JSON, zh_Hans: 输入 JSON }
+    human_description: { en_US: Request object from the current Web API contract., zh_Hans: 当前 Web API 接口定义的请求对象。 }
+    llm_description: 'query is required; optional include_x. X sources are best effort. A 202 result contains a task: use Run Capability operation status; never restart to poll.'
+extra:
+  python:
+    source: tools/web_research.py

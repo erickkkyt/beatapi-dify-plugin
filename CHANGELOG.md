@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.0 — 2026-10-02
+
+- Add Web tools and complete search views; preserve raw results and research task replies with bounded timeouts.
+
+
 ## 0.2.1
 
 - Clarify that Run is limited to capabilities whose inspected execution
